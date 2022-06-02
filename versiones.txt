@@ -1,0 +1,13 @@
+tailwindcss@2.2.19
+autoprefixer@10.4.0
+postcss@8.3.11
+
+npm install -D tailwindcss@ postcss@ autoprefixer@
+
+npx tailwindcss init -p
+
+tailwind.config.js ---> purge: ["./index.html", "./src/**/*.{jsx}"]
+index.css --->
+	@import "tailwindcss/base";
+	@import "tailwindcss/components";
+	@import "tailwindcss/utilities";
