@@ -1,13 +1,26 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Error from './Error'
 
-const Formulario = ({ pacientes, setPacientes }) => {
+const Formulario = ({ pacientes, setPacientes, paciente, setPaciente }) => {
 
   const [mascota, setMascota] = useState('')
   const [propietario, setPropietario] = useState('')
   const [email, setEmail] = useState('')
   const [fecha, setFecha] = useState('')
   const [sintomas, setSintomas] = useState('')
+
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    if( Object.keys(paciente).length > 0 ) {
+      setMascota(paciente.mascota)
+      setPropietario(paciente.propietario)
+      setEmail(paciente.email)
+      setFecha(paciente.fecha)
+      setSintomas(paciente.sintomas)
+    }
+  }, [paciente])
+  
 
   const generarId = () => {
     const random = Math.random().toString(36).slice(2)
@@ -16,7 +29,6 @@ const Formulario = ({ pacientes, setPacientes }) => {
     return random + fecha
   }
 
-  const [error, setError] = useState(false)
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -37,11 +49,24 @@ const Formulario = ({ pacientes, setPacientes }) => {
       email,
       fecha,
       sintomas,
-      id: generarId()
+    }
+    
+    if(paciente.id) {
+      // Editando un registro
+      objetoPaciente.id = paciente.id
+      const pacientesActualizados = pacientes.map( pacienteOriginal => (
+        pacienteOriginal.id === paciente.id ? objetoPaciente : pacienteOriginal
+      ))
+
+      setPacientes(pacientesActualizados)
+      setPaciente({})
+    } else {
+      // Nuevo registro
+      objetoPaciente.id = generarId()
+      setPacientes([...pacientes, objetoPaciente])
     }
 
-    setPacientes([...pacientes, objetoPaciente])
-
+    //  Limpia el formulario
     setMascota('')
     setPropietario('')
     setEmail('')
@@ -138,7 +163,7 @@ const Formulario = ({ pacientes, setPacientes }) => {
               <input
                 type="submit"
                 className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-all"
-                value="Agregar paciente"
+                value={paciente.id ? 'Editar Paciente' : 'Agregar Paciente'}
               />
           </form>
       </div>
